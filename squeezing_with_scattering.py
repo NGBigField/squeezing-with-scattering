@@ -10,7 +10,7 @@ import functools
 
 #%% functions
 # probability of k losses with ns scattering events
-@functools.cache   # this decorator helps tremendously with recursive calls! 
+# @functools.cache   # this decorator helps tremendously with recursive calls! 
 def p_k_loss_with_ns_scattering(ns, k, N):
     if k >ns:
         return 0
@@ -64,7 +64,7 @@ def squeezing_with_scattering(rho, chi_tau, x_a):
 
 #%% main test
 
-def main_test():
+def plot_test():
     #%% parameters
     chi_tau = np.pi/4 # squeezing parameter
     N = 20 # number of atoms
@@ -87,5 +87,24 @@ def main_test():
 
 #%%
 
+#%% Timing test:
+def timing_test():
+    import time
+    N = 20
+    chi_tau = np.pi/4
+    theta = 0
+    rho_initial = ket2dm(spin_coherent(N/2, theta, 0))
+    x_a = 10
+    start = time.time()
+    ns = nsc_for_desired_squeezing(x_a, N, chi_tau, Gamma=2*np.pi*0.184, kappa=2*np.pi*0.84, eta=3.2)
+    print(f"Time for nsc_for_desired_squeezing: {time.time()-start}")
+    start = time.time()
+    squeezed_state = squeezing(rho_initial, N, chi_tau)
+    print(f"Time for squeezing: {time.time()-start}")
+    start = time.time()
+    scattered_state = return_scattered_state(squeezed_state, ns, N)
+    print(f"Time for return_scattered_state: {time.time()-start}")
+    return scattered_state
+
 if __name__ == '__main__':
-    main_test()
+    plot_test()
